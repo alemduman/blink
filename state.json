@@ -1,1 +1,16 @@
-{ "history": [], "tournament": null, "lastRefresh": null }
+{
+  "history": [
+    {
+      "date": "2026-10-31",
+      "video": "auto-dots-dusk.mp4",
+      "test": "dots",
+      "theme": "dusk",
+      "slot": "2026-10-31T22",
+      "mediaId": "18441786202178606",
+      "permalink": "https://www.instagram.com/reel/DfKzhyUAboN/",
+      "posted": "2026-10-31T18:31:47.209Z"
+    }
+  ],
+  "tournament": null,
+  "lastRefresh": null
+}
