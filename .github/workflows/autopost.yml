@@ -1,0 +1,86 @@
+name: Blink autopost
+
+on:
+  schedule:
+    # Время в UTC: Баку = UTC + 4. Слот 20:07 по Баку = 16:07 UTC; запуск повторяется каждые 15 минут: GitHub иногда теряет или задерживает запуски.
+    # Дубль в тот же слот пропускается (state.json, поле slot). Часы слотов задаются в config.json -> schedule.hours; здесь должны совпадать (по UTC).
+    - cron: '7,22,37,52 16 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Проверка: подготовить видео, но НЕ публиковать'
+        type: boolean
+        default: true
+      source:
+        description: 'cron = запуск от внешнего планировщика (правила расписания: слоты, дубли)'
+        type: string
+        default: ''
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: autopost
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      RUN_KIND: ${{ github.event_name == 'schedule' && 'schedule' || (inputs.source == 'cron' && 'schedule' || github.event_name) }}
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          package-manager-cache: false
+
+      - name: Проверить ffmpeg
+        run: |
+          command -v ffmpeg >/dev/null || (sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg)
+          ffmpeg -version | head -n 1
+
+      - name: Выбрать видео из очереди
+        id: render
+        run: node scripts/pick.mjs
+
+      - uses: actions/configure-pages@v6
+        if: steps.render.outputs.skip != 'true'
+
+      - uses: actions/upload-pages-artifact@v5
+        if: steps.render.outputs.skip != 'true'
+        with:
+          path: out/site
+
+      - name: Выложить видео по публичной ссылке (GitHub Pages)
+        id: deploy
+        if: steps.render.outputs.skip != 'true'
+        uses: actions/deploy-pages@v5
+
+      - name: Опубликовать в Instagram
+        id: publish
+        if: steps.render.outputs.skip != 'true'
+        env:
+          IG_TOKEN: ${{ secrets.IG_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          PAGE_URL: ${{ steps.deploy.outputs.page_url }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+        run: node scripts/publish.mjs
+
+      - name: Убрать опубликованное из очереди
+        if: steps.publish.outputs.posted == 'true'
+        run: |
+          node scripts/archive.mjs
+          git config user.name "blink-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state.json queue posted
+          git commit -q -m "Опубликован ролик $(date -u +%F)" || exit 0
+          git pull -q --rebase
+          git push -q

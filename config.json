@@ -1,0 +1,10 @@
+{
+  "autoPublish": true,
+  "startDate": "2026-10-31",
+  "timezone": "Asia/Baku",
+  "shareToFeed": true,
+  "login": "unified",
+  "apiVersion": "v26.0",
+  "schedule": { "hours": [20], "minute": 7, "maxDelayMinutes": 90 },
+  "minGapMinutes": 50
+}
