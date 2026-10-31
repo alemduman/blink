@@ -3,6 +3,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
 import { ROOT, OUT, SITE, loadConfig, loadState, writeJSON, setOutput, summary } from './lib.mjs';
 
 const KIND = process.env.RUN_KIND || process.env.GITHUB_EVENT_NAME;
@@ -36,10 +38,25 @@ if (KIND === 'schedule') {
 }
 
 const QUEUE = path.join(ROOT, 'queue');
-const videos = fs.existsSync(QUEUE) ? fs.readdirSync(QUEUE).filter(f => /\.mp4$/i.test(f)).sort() : [];
-if (!videos.length) skip('Очередь пуста', 'В папке `queue/` нет видео. Загрузи .mp4 (и .txt с описанием).');
+let SRC_DIR = QUEUE, GENERATED = null;
+let videos = fs.existsSync(QUEUE) ? fs.readdirSync(QUEUE).filter(f => /\.mp4$/i.test(f)).sort() : [];
+if (!videos.length) {
+  // Очередь пуста: приложение само делает новый ролик (другой тест и другой фон, сложность Expert, максимальное качество)
+  if (cfg.generate && cfg.generate.enabled === false) skip('Очередь пуста', 'В папке `queue/` нет видео, автогенерация выключена (`generate.enabled: false`).');
+  const GEN = path.join(ROOT, '.gen');
+  fs.rmSync(GEN, { recursive: true, force: true });
+  console.log('Очередь пуста, генерируем ролик в приложении…');
+  const sh = (cmd, args, env) => execFileSync(cmd, args, { stdio: 'inherit', cwd: ROOT, env: { ...process.env, ...(env || {}) } });
+  if (!process.env.PW_PATH) try { require('playwright'); } catch {
+    sh('npm', ['install', '--no-audit', '--no-fund', '--no-save', 'playwright@1.49.1']);
+  }
+  if (!process.env.PW_PATH && !fs.existsSync(path.join(process.env.HOME || '', '.cache/ms-playwright'))) sh('npx', ['playwright', 'install', '--with-deps', 'chromium']);
+  sh('node', ['scripts/generate.mjs', GEN]);
+  GENERATED = JSON.parse(fs.readFileSync(path.join(GEN, 'meta.json'), 'utf8'));
+  SRC_DIR = GEN; videos = [GENERATED.base + '.mp4'];
+}
 const file = videos[0], base = file.replace(/\.mp4$/i, '');
-const capPath = path.join(QUEUE, base + '.txt');
+const capPath = path.join(SRC_DIR, base + '.txt');
 let caption = fs.existsSync(capPath) ? fs.readFileSync(capPath, 'utf8').trim() : '';
 // Instagram принимает не больше 5 хэштегов: лишние убираем с конца, чтобы публикацию не отклонили
 const tags = caption.match(/#[\p{L}\p{N}_]+/gu) || [];
@@ -55,7 +72,7 @@ fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(path.join(SITE, 'v'), { recursive: true });
 fs.cpSync(path.join(ROOT, 'static'), SITE, { recursive: true });
 const name = `${today}-${base.replace(/[^A-Za-z0-9._-]+/g, '-')}`.slice(0, 120);
-const dst = path.join(SITE, 'v', name + '.mp4'), src = path.join(QUEUE, file);
+const dst = path.join(SITE, 'v', name + '.mp4'), src = path.join(SRC_DIR, file);
 
 // Instagram нужен H.264 + AAC, 4:2:0; если файл другой, перекодируем (без потери разрешения)
 const probe = JSON.parse(execFileSync('ffprobe', ['-v', 'error', '-show_entries', 'stream=codec_type,codec_name,pix_fmt,width,height:format=duration', '-of', 'json', src]).toString());
@@ -71,10 +88,10 @@ else {
     '-c:a', 'aac', '-b:a', '128k', '-ar', '48000', '-ac', '2', '-movflags', '+faststart', dst]);
 }
 let cover = null;
-for (const ext of ['jpg', 'jpeg', 'png']) { const c = path.join(QUEUE, `${base}.${ext}`); if (fs.existsSync(c)) { cover = `v/${name}.jpg`; fs.copyFileSync(c, path.join(SITE, cover)); break; } }
+for (const ext of ['jpg', 'jpeg', 'png']) { const c = path.join(SRC_DIR, `${base}.${ext}`); if (fs.existsSync(c)) { cover = `v/${name}.jpg`; fs.copyFileSync(c, path.join(SITE, cover)); break; } }
 
-writeJSON(path.join(OUT, 'post.json'), { video: `v/${name}.mp4`, cover, caption, title: base, queueFile: file, seconds: dur, createdAt: NOW.toISOString() });
-const next = { ...state, history: [...state.history, { date: today, video: file, ...(SLOT ? { slot: SLOT } : {}) }].slice(-200) };
+writeJSON(path.join(OUT, 'post.json'), { video: `v/${name}.mp4`, cover, caption, title: base, queueFile: GENERATED ? null : file, seconds: dur, createdAt: NOW.toISOString() });
+const next = { ...state, history: [...state.history, { date: today, video: file, ...(GENERATED ? { test: GENERATED.test, theme: GENERATED.theme } : {}), ...(SLOT ? { slot: SLOT } : {}) }].slice(-200) };
 writeJSON(path.join(OUT, 'state.next.json'), next);
-summary(`### Ролик выбран\n- Файл: \`${file}\` (${Math.round(dur)} с)\n- Осталось в очереди после него: ${videos.length - 1}\n\n**Подпись:**\n\n${caption.replace(/\n/g, '  \n') || '(пусто)'}\n`);
+summary(`### Ролик выбран\n- Файл: \`${file}\` (${Math.round(dur)} с)\n- ${GENERATED ? `Сгенерировано приложением: тест \`${GENERATED.test}\`, фон \`${GENERATED.theme}\`, сложность ${GENERATED.difficulty}, раундов ${GENERATED.rounds}` : `Осталось в очереди после него: ${videos.length - 1}`}\n\n**Подпись:**\n\n${caption.replace(/\n/g, '  \n') || '(пусто)'}\n`);
 console.log(`Выбрано: ${file}, ${dur.toFixed(1)} с. Подпись ${caption.length} символов.`);

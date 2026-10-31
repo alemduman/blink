@@ -18,5 +18,13 @@
     "minute": 7,
     "maxDelayMinutes": 90
   },
-  "minGapMinutes": 50
+  "minGapMinutes": 50,
+  "generate": {
+    "enabled": true,
+    "difficulty": "expert",
+    "maxSeconds": 58,
+    "bitrate": 30000000,
+    "avoidTests": 8,
+    "avoidThemes": 4
+  }
 }
