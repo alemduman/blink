@@ -82,6 +82,36 @@ const CAPTIONS = {
     bodies: ['{N} rounds. Pick the side (or color) with more dots before the timer ends.', 'The gap gets smaller every round. Don’t count them one by one 😏', 'Your eyes vs. the dots. Drop your score below.'],
     tags: ['eyetest', 'visiontest', 'countingchallenge', 'attentiontest', 'brainteaser', 'braingames', 'perception', 'focus', 'quiz', 'challenge'],
   },
+  shapecount: {
+    hooks: ['How many triangles do you see? 🔺', 'Most people get this one wrong', 'Count every single one 👀', 'How many squares? Think twice'],
+    bodies: ['{N} shapes, {S} seconds each. Count every triangle or square, big ones too!', 'The big shapes hide inside the small ones. Don’t forget them 😏', 'Write your answer in the comments before the reveal.'],
+    tags: ['howmanytriangles', 'howmanysquares', 'brainteaser', 'puzzle', 'iqtest', 'mathpuzzle', 'braingames', 'logicpuzzle', 'quiz', 'challenge'],
+  },
+  shadeorder: {
+    hooks: ['Order these from dark to light 🎨', 'Can you sort the shades?', 'Darkest to lightest. Go!', 'Your eyes vs. {N} sneaky gradients'],
+    bodies: ['{N} rounds, {S} seconds each. Which order goes from the darkest tile to the lightest?', 'The shades get closer every round. No pausing 😏', 'Pick A, B or C before the reveal and drop your score below.'],
+    tags: ['colortest', 'eyetest', 'colorchallenge', 'visiontest', 'shades', 'braingames', 'perception', 'testyourself', 'quiz', 'challenge'],
+  },
+  words: {
+    hooks: ['Find the hidden words in {S} seconds 🔎', 'Can you find all of them?', 'Word search, speed edition ⏱️', 'How many words can you spot?'],
+    bodies: ['{N} grids, {S} seconds each. Every grid hides a few words of one theme.', 'Words can go in any direction. Write the ones you find below 👇', 'Pause = cheating 😏 How many did you find?'],
+    tags: ['wordsearch', 'wordgame', 'wordpuzzle', 'findtheword', 'puzzle', 'brainteaser', 'braingames', 'vocabulary', 'quiz', 'challenge'],
+  },
+  landolt: {
+    hooks: ['Eye test: where is the gap? 👀', 'Can you see the gap?', 'How good is your vision?', 'Only sharp eyes get the last one'],
+    bodies: ['{N} rings, {S} seconds each. Which side is the gap on?', 'The ring gets smaller every round, just like a real eye exam 👀', 'No squinting! Drop your score below 👇'],
+    tags: ['eyetest', 'visiontest', 'eyesight', 'eyes', 'braintest', 'braingames', 'challenge', 'quiz', 'focus', 'mindgames'],
+  },
+  sudoku: {
+    hooks: ['Solve this mini sudoku in {S} seconds 🔢', 'Can you crack it?', 'Which number goes in the ? cell', 'Mini sudoku, maximum brain'],
+    bodies: ['{N} mini sudokus, {S} seconds each. Every row, column and 2×2 box holds 1 to 4.', 'Which number belongs in the marked cell? Pick before the reveal.', 'Easy rules, sneaky puzzles 😏 Drop your score below.'],
+    tags: ['sudoku', 'minisudoku', 'logicpuzzle', 'numberpuzzle', 'puzzle', 'brainteaser', 'iqtest', 'braingames', 'quiz', 'challenge'],
+  },
+  tensec: {
+    hooks: ['Can you feel 10 seconds? ⏱️', 'Count in your head. No cheating 🤫', 'No clock. Just your brain.', 'How good is your inner clock?'],
+    bodies: ['The clock disappears and you count the seconds in your head. Then I show the exact time.', '{N} rounds. Were you early or late? Tell me in the comments.', 'Don’t tap, don’t move your lips 😏'],
+    tags: ['timechallenge', 'tensecondchallenge', 'braintest', 'innerclock', 'challenge', 'braingames', 'mindgames', 'testyourself', 'quiz', 'fun'],
+  },
 };
 const CTAS = ['Comment your score 👇', 'Drop your score in the comments 👇', 'Tag a friend who needs to try this 👀', 'Save it and challenge a friend later 🔁', 'Be honest: how many did you get? 👇'];
 const BROAD = { tiktok: ['challenge', 'quiz', 'fyp', 'viral'], instagram: ['reels', 'quiz', 'challenge', 'explore'], youtube: ['shorts', 'quiz', 'challenge'] };
