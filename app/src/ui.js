@@ -97,11 +97,6 @@ const CAPTIONS = {
     bodies: ['{N} grids, {S} seconds each. Every grid hides a few words of one theme.', 'Words can go in any direction. Write the ones you find below 👇', 'Pause = cheating 😏 How many did you find?'],
     tags: ['wordsearch', 'wordgame', 'wordpuzzle', 'findtheword', 'puzzle', 'brainteaser', 'braingames', 'vocabulary', 'quiz', 'challenge'],
   },
-  landolt: {
-    hooks: ['Eye test: where is the gap? 👀', 'Can you see the gap?', 'How good is your vision?', 'Only sharp eyes get the last one'],
-    bodies: ['{N} rings, {S} seconds each. Which side is the gap on?', 'The ring gets smaller every round, just like a real eye exam 👀', 'No squinting! Drop your score below 👇'],
-    tags: ['eyetest', 'visiontest', 'eyesight', 'eyes', 'braintest', 'braingames', 'challenge', 'quiz', 'focus', 'mindgames'],
-  },
   sudoku: {
     hooks: ['Solve this mini sudoku in {S} seconds 🔢', 'Can you crack it?', 'Which number goes in the ? cell', 'Mini sudoku, maximum brain'],
     bodies: ['{N} mini sudokus, {S} seconds each. Every row, column and 2×2 box holds 1 to 4.', 'Which number belongs in the marked cell? Pick before the reveal.', 'Easy rules, sneaky puzzles 😏 Drop your score below.'],

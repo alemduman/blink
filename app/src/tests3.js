@@ -242,50 +242,6 @@ defineTest({
 });
 
 // ---------------------------------------------------------------------
-// 19. Eye Test (Landolt ring: where is the gap?)
-// ---------------------------------------------------------------------
-const LD_DIRS = ['Up', 'Up-right', 'Right', 'Down-right', 'Down', 'Down-left', 'Left', 'Up-left'];
-function drawLandolt(ctx, r, R, s) {
-  const u = R.w / 820, th = s.th, ph = s.phase;
-  stage(ctx, R, th, u);
-  const cx = R.x + R.w / 2, cy = R.y + R.h * 0.47;
-  const Ro = r.ro * u, w = Ro * 0.4, rm = Ro - w / 2, ang = -Math.PI / 2 + r.dir * Math.PI / 4, half = (w / rm) / 2;
-  ctx.lineCap = 'butt'; ctx.lineWidth = w; ctx.strokeStyle = th.ink;
-  ctx.beginPath(); ctx.arc(cx, cy, rm, ang + half, ang - half + Math.PI * 2); ctx.stroke();
-  if (ph === 'reveal') {
-    const p = eOut(clamp(s.local / 0.5));
-    ctx.save(); ctx.globalAlpha *= p; ctx.strokeStyle = th.ok; ctx.lineWidth = w;
-    ctx.beginPath(); ctx.arc(cx, cy, rm, ang - half, ang + half); ctx.stroke(); ctx.restore();
-    const ax = cx + Math.cos(ang) * (Ro + 70 * u), ay = cy + Math.sin(ang) * (Ro + 70 * u);
-    ctx.save(); ctx.globalAlpha *= p; ctx.fillStyle = th.ok; circle(ctx, ax, ay, 22 * u); ctx.fill(); ctx.restore();
-  }
-  if (ph !== 'art') { setFont(ctx, 700, 38 * u, th.fam); ctx.fillStyle = th.sub; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(ph === 'reveal' ? `Gap: ${LD_DIRS[r.dir]}` : 'Find the gap in the ring', cx, R.y + R.h - 70 * u); ctx.textBaseline = 'alphabetic'; }
-}
-defineTest({
-  id: 'landolt', name: 'Eye Test', tag: 'Vision', eyebrow: 'Eye test',
-  blurb: 'A ring with a tiny gap. Which side is the gap on? The ring shrinks each round, like a real eye exam.',
-  defaults: { rounds: 4, seconds: 5 }, roundsRange: [3, 6],
-  hooks: ['Eye test: where is the gap? 👀', 'Can you see the gap?', 'How good is your vision?', 'Only sharp eyes get the last one'],
-  gen(rng, i, N, diff) {
-    const f = fOf(i, N), ro = Math.round(lerp(...{ easy: [250, 130], medium: [230, 100], hard: [210, 80], expert: [190, 62] }[diff], f));
-    const nd = diff === 'easy' ? 4 : 8, dir = nd === 4 ? rInt(rng, 0, 3) * 2 : rInt(rng, 0, 7);
-    const pool = nd === 4 ? [0, 2, 4, 6] : [0, 1, 2, 3, 4, 5, 6, 7];
-    const near = pool.filter(d => d !== dir);
-    const wrong = rShuffle(rng, near).slice(0, 2);
-    const options = rShuffle(rng, [dir, ...wrong].map(d => ({ label: LD_DIRS[d], correct: d === dir })));
-    return { dir, ro, options };
-  },
-  phases: (r, cfg) => [{ kind: 'q', dur: cfg.seconds, timer: true }, { kind: 'reveal', dur: 2.2 }],
-  header: (r, ph, tl) => (ph === 'q' ? { eyebrow: `Round ${r.i + 1} / ${tl.N}`, title: 'Where is the gap? 👀' } : { eyebrow: 'The gap was', title: LD_DIRS[r.dir] }),
-  bottom: r => ({ options: r.options, since: 'q' }),
-  cues: (r, seg) => (seg.phase === 'q' ? [{ t: 0.02, s: 'flip' }] : null),
-  draw: (ctx, r, s) => drawLandolt(ctx, r, s.rect, s),
-  art: (ctx, R, tl) => drawLandolt(ctx, { dir: 2, ro: 200 }, R, { phase: 'art', local: 0, th: tl.theme }),
-  outro: { title: 'How many gaps did you see?', labels: ['Eagle eyes 🦅', 'Sharp vision 👀', 'Needs glasses? 🤓', 'Who turned off the lights 😵'] },
-  introChip: tl => `${tl.N} rings · the gap gets smaller`,
-});
-
-// ---------------------------------------------------------------------
 // 20. Mini Sudoku (4x4)
 // ---------------------------------------------------------------------
 const SDK_BASE = [[1, 2, 3, 4], [3, 4, 1, 2], [2, 1, 4, 3], [4, 3, 2, 1]];
