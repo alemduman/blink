@@ -57,6 +57,13 @@ for (const m of media) {
     if ((c.replies && c.replies.data || []).some(r => r.username === me.username)) continue;
     // комментарий без текста (гифка, стикер) или только эмодзи: отвечаем эмодзи
     if (sent >= MAX) break;
+    if (process.env.REPLY_TO_USER) {   // разовый ответ заданным текстом конкретному автору
+      if (c.username !== process.env.REPLY_TO_USER) continue;
+      const msg = (process.env.REPLY_TEXT || '').trim(); if (!msg) continue;
+      console.log(`${c.username}: «${text.slice(0, 60)}» → «${msg}»`);
+      if (!DRY) { await ig('POST', `${c.id}/replies`, { message: msg }); sent++; }
+      continue;
+    }
     let reply = (text.length < 1 || emojiOnly(text)) ? pick(['🔥', '🙌', '😎', '👀', '😂', '💪', '🤝']) : await llm(text, m.caption);
     if (reply === null) { console.log(`нет ответа от LLM, пропускаю до следующего запуска: «${text.slice(0, 40)}»`); continue; }   // шаблонов нет: лучше промолчать, чем ответить как бот
     if (/^SKIP\b/i.test(reply)) { console.log(`LLM: пропуск «${text.slice(0, 40)}»`); continue; }

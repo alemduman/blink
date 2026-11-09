@@ -9,6 +9,14 @@ on:
         description: 'Проверка: показать ответы, но не отправлять'
         type: boolean
         default: true
+      reply_user:
+        description: 'Разовый ответ: ник автора комментария'
+        type: string
+        default: ''
+      reply_text:
+        description: 'Разовый ответ: текст'
+        type: string
+        default: ''
       sample:
         description: 'Тест стиля: комментарии через | (ничего не отправляется)'
         type: string
@@ -38,5 +46,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           ACCOUNT_DESC: 'короткие визуальные тесты на внимание и мозг в Reels (найди, посчитай, угадай)'
           SAMPLE_COMMENTS: ${{ github.event_name == 'workflow_dispatch' && inputs.sample || '' }}
+          REPLY_TO_USER: ${{ github.event_name == 'workflow_dispatch' && inputs.reply_user || '' }}
+          REPLY_TEXT: ${{ github.event_name == 'workflow_dispatch' && inputs.reply_text || '' }}
           DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
         run: node scripts/replies.mjs
