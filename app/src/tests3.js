@@ -75,7 +75,7 @@ function drawShapeCount(ctx, r, R, s) {
 defineTest({
   id: 'shapecount', name: 'Shape Count', tag: 'Logic', eyebrow: 'Logic test',
   blurb: 'How many triangles (or squares) hide in the figure? The reveal highlights every size one by one.',
-  defaults: { rounds: 2, seconds: 25 }, roundsRange: [2, 2],
+  defaults: { rounds: 2, seconds: 20 }, roundsRange: [2, 2],
   hooks: ['How many triangles do you see? 🔺', 'Most people get this one wrong', 'Count every single one 👀', 'How many squares? Think twice'],
   shared(vr) { return { first: vr() < 0.5 ? 0 : 1 }; },
   gen(rng, i, N, diff, sh) {
