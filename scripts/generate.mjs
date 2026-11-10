@@ -111,7 +111,7 @@ fs.writeFileSync(path.join(outDir, base + '.jpg'), Buffer.from(res.cover, 'base6
 const tags = res.cap.tags.slice(0, 5).map(t => '#' + t);
 const text = res.cap.text.replace(/\n?#\S+(\s+#\S+)*\s*$/u, '').trim();
 // ключевые слова для поиска Instagram (в тексте, хештеги остаются)
-const kw = `${res.name}: ${String(res.eyebrow || 'brain test').toLowerCase()} and brain game. Quick quiz challenge: can you beat it? Test yourself, eye test, IQ test, puzzle game, riddles.`;
+const kw = `${res.name}: ${String(res.eyebrow || 'brain test').toLowerCase()} and brain game. Quick quiz challenge: can you beat it? Test yourself, brain teaser, IQ test, puzzle game.`;
 const textKw = text.replace(/\n\n/, `\n\n${kw}\n\n`);
 fs.writeFileSync(path.join(outDir, base + '.txt'), `${textKw}\n\n${tags.join(' ')}\n`);
 fs.writeFileSync(path.join(outDir, 'meta.json'), JSON.stringify({ base, test, theme, difficulty: G.difficulty, rounds: res.rounds, seconds: res.seconds, opts: res.opts, duration: res.duration }, null, 2));
