@@ -96,7 +96,7 @@ const res = await page.evaluate(async ({ test, theme, G }) => {
   const buf = new Uint8Array(await blob.arrayBuffer());
   let bin = ''; const parts = [];
   for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode.apply(null, buf.subarray(i, i + 0x8000));
-  return { video: btoa(bin), cover, cap: B.getCaption(), duration: xtl.duration, rounds: n, opts, seconds: st.seconds, name: T.name };
+  return { video: btoa(bin), cover, cap: B.getCaption(), duration: xtl.duration, rounds: n, opts, seconds: st.seconds, name: T.name, eyebrow: T.eyebrow || '' };
 }, { test, theme, G });
 
 const base = `auto-${test}-${theme}`;
@@ -110,7 +110,10 @@ fs.writeFileSync(path.join(outDir, base + '.jpg'), Buffer.from(res.cover, 'base6
 // подпись: текст + не больше 5 хэштегов (лимит Instagram)
 const tags = res.cap.tags.slice(0, 5).map(t => '#' + t);
 const text = res.cap.text.replace(/\n?#\S+(\s+#\S+)*\s*$/u, '').trim();
-fs.writeFileSync(path.join(outDir, base + '.txt'), `${text}\n\n${tags.join(' ')}\n`);
+// ключевые слова для поиска Instagram (в тексте, хештеги остаются)
+const kw = `${res.name}: ${String(res.eyebrow || 'brain test').toLowerCase()} and brain game. Quick quiz challenge: can you beat it? Test yourself, eye test, IQ test, puzzle game, riddles.`;
+const textKw = text.replace(/\n\n/, `\n\n${kw}\n\n`);
+fs.writeFileSync(path.join(outDir, base + '.txt'), `${textKw}\n\n${tags.join(' ')}\n`);
 fs.writeFileSync(path.join(outDir, 'meta.json'), JSON.stringify({ base, test, theme, difficulty: G.difficulty, rounds: res.rounds, seconds: res.seconds, opts: res.opts, duration: res.duration }, null, 2));
 console.log(`Готово: ${base}.mp4, ${(res.duration).toFixed(1)} с, раундов ${res.rounds}, ${(fs.statSync(path.join(outDir, base + '.mp4')).size / 1048576).toFixed(1)} МБ`);
 await browser.close();
