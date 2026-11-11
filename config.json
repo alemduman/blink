@@ -13,7 +13,7 @@
   "minGapMinutes": 50,
   "generate": {
     "enabled": true,
-    "difficulty": "expert",
+    "difficulty": "medium",
     "maxSeconds": 58,
     "bitrate": 30000000,
     "avoidTests": 8,
