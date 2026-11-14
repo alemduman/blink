@@ -1904,11 +1904,49 @@ const uniqNums = (rng, ans, wrong) => {
 // 10. Emoji Riddle (rebus)
 // ---------------------------------------------------------------------
 const REBUS = [
-  ['🦁 👑', 'Lion King', 'movie'], ['❄️ 👸', 'Frozen', 'movie'], ['🕷️ 👨', 'Spider-Man', 'movie'], ['🦇 👨', 'Batman', 'movie'],
-  ['🐠 🔎', 'Finding Nemo', 'movie'], ['🚢 🧊 ❤️', 'Titanic', 'movie'], ['🦈 🌊', 'Jaws', 'movie'], ['🐀 🍳', 'Ratatouille', 'movie'],
-  ['👻 🚫', 'Ghostbusters', 'movie'], ['🎈 🏠', 'Up', 'movie'], ['🧸 🤠', 'Toy Story', 'movie'], ['🦖 🌴', 'Jurassic Park', 'movie'],
-  ['🧞 🪔', 'Aladdin', 'movie'], ['🐼 🥋', 'Kung Fu Panda', 'movie'], ['🧙 ⚡', 'Harry Potter', 'movie'], ['🍫 🏭', 'Willy Wonka', 'movie'],
-  ['🚗 🏁', 'Cars', 'movie'], ['🐧 💃', 'Happy Feet', 'movie'],
+  // Фильмы: подсказка по сюжету, а не по названию; варианты ответа — похожие фильмы.
+  // [эмодзи, ответ, 'movie', [два похожих фильма для вариантов], сложность 2 — средне, 3 — трудно]
+  ['⛄ 👭 🏰 🎤', 'Frozen', 'movie', ['Tangled', 'Brave'], 2],
+  ['👴 🎈 🐕 🗺️', 'Up', 'movie', ['Coco', 'Toy Story'], 2],
+  ['🐀 👨‍🍳 🗼 🍲', 'Ratatouille', 'movie', ['Chef', 'Paddington'], 2],
+  ['🧹 🦉 🚂 ⚡', 'Harry Potter', 'movie', ['Percy Jackson', 'Polar Express'], 2],
+  ['🏠 👦 🎄 🪤', 'Home Alone', 'movie', ['The Grinch', 'Elf'], 2],
+  ['🦈 🎵 🏖️ 🚤', 'Jaws', 'movie', ['The Meg', 'Deep Blue Sea'], 2],
+  ['🧅 🐴 👸 🏰', 'Shrek', 'movie', ['Tangled', 'Cinderella'], 2],
+  ['🐟 🦷 🚽 🌊', 'Finding Nemo', 'movie', ['Shark Tale', 'Luca'], 2],
+  ['🌹 🕯️ ⏰ 📚', 'Beauty & Beast', 'movie', ['Cinderella', 'Tangled'], 2],
+  ['👻 🧪 🍡 🏢', 'Ghostbusters', 'movie', ['Casper', 'Beetlejuice'], 2],
+  ['🎲 🐘 🌴 🥁', 'Jumanji', 'movie', ['Zathura', 'Jurassic Park'], 2],
+  ['👽 🚲 🌕 📞', 'E.T.', 'movie', ['Super 8', 'Paul'], 2],
+  ['💤 🌀 🏙️ 🔁', 'Inception', 'movie', ['Interstellar', 'Tenet'], 3],
+  ['💊 🔴 🔵 🕶️', 'The Matrix', 'movie', ['Men in Black', 'John Wick'], 3],
+  ['🧬 🦟 💎 🏝️', 'Jurassic Park', 'movie', ['Jumanji', 'King Kong'], 3],
+  ['🚗 ⚡ 🕰️ 🎸', 'Back to Future', 'movie', ['Cars', 'Fast & Furious'], 3],
+  ['🌽 🚀 🕳️ ⏳', 'Interstellar', 'movie', ['Gravity', 'The Martian'], 3],
+  ['🍊 🐴 🛏️ 🇮🇹', 'The Godfather', 'movie', ['Scarface', 'Goodfellas'], 3],
+  ['🏃 🍫 📦 🦐', 'Forrest Gump', 'movie', ['Cast Away', 'Big Fish'], 3],
+  ['🎻 🚪 💎 🧊', 'Titanic', 'movie', ['Avatar', 'The Notebook'], 3],
+  ['💍 🌋 🦶 🧙', 'Lord of Rings', 'movie', ['The Hobbit', 'Narnia'], 3],
+  ['🏐 ✈️ 🏝️ 🦷', 'Cast Away', 'movie', ['Life of Pi', 'The Beach'], 3],
+  ['📺 🏝️ 🌊 🚪', 'Truman Show', 'movie', ['The Beach', 'Cast Away'], 3],
+  ['👦 👀 💀 🩺', 'Sixth Sense', 'movie', ['Coco', 'Ghost'], 3],
+  ['👩‍🚀 🛰️ 💥 🌍', 'Gravity', 'movie', ['Interstellar', 'Armageddon'], 3],
+  ['👨‍🚀 🥔 🔴 📡', 'The Martian', 'movie', ['Interstellar', 'Gravity'], 3],
+  ['💀 🎸 🌼 👦', 'Coco', 'movie', ['Encanto', 'Book of Life'], 3],
+  ['🚪 👧 😱 ⚡', 'Monsters Inc', 'movie', ['Inside Out', 'Coraline'], 3],
+  ['🐰 👮 🦊 🦥', 'Zootopia', 'movie', ['Robin Hood', 'Sing'], 3],
+  ['🌊 🛶 🐔 🪝', 'Moana', 'movie', ['Lilo & Stitch', 'Luca'], 3],
+  ['🤖 🌱 🗑️ 👢', 'WALL-E', 'movie', ['Big Hero 6', 'Iron Giant'], 3],
+  ['🏹 🔥 🍞 🐦', 'Hunger Games', 'movie', ['Brave', 'Divergent'], 3],
+  ['🕶️ 👽 🔦 🖤', 'Men in Black', 'movie', ['The Matrix', 'Paul'], 3],
+  ['👃 🤥 🐳 🪵', 'Pinocchio', 'movie', ['Moby Dick', 'Finding Nemo'], 3],
+  ['🐯 🦷 💍 🎰', 'The Hangover', 'movie', ['Life of Pi', 'Jumanji'], 3],
+  ['🧠 😡 😢 🎢', 'Inside Out', 'movie', ['Soul', 'Monsters Inc'], 3],
+  ['🤡 🪜 💃 🌆', 'Joker', 'movie', ['It', 'Dark Knight'], 3],
+  ['🚀 🐍 👢 🤠', 'Toy Story', 'movie', ['Cars', 'Rango'], 3],
+  ['🌅 🐒 🐗 👑', 'The Lion King', 'movie', ['Jungle Book', 'Madagascar'], 3],
+  ['🌪️ 👠 🦁 🤖', 'Wizard of Oz', 'movie', ['Twister', 'Wicked'], 3],
+  ['🦍 🏙️ ✈️ 👩', 'King Kong', 'movie', ['Godzilla', 'Rampage'], 3],
   ['☀️ 🌻', 'Sunflower', 'word'], ['🍯 🌙', 'Honeymoon', 'word'], ['🐱 🐟', 'Catfish', 'word'], ['🍎 🥧', 'Apple Pie', 'word'],
   ['⭐ 🐟', 'Starfish', 'word'], ['📚 🪱', 'Bookworm', 'word'], ['🧠 🌪️', 'Brainstorm', 'word'], ['🎂 📅', 'Birthday', 'word'],
   ['🦷 🧚', 'Tooth Fairy', 'word'], ['🌍 🏆', 'World Cup', 'word'], ['🐸 👑', 'Frog Prince', 'word'], ['🌽 🐕', 'Corn Dog', 'word'],
@@ -1937,19 +1975,24 @@ function drawRebus(ctx, r, R, s) {
 }
 defineTest({
   id: 'rebus', name: 'Emoji Riddle', tag: 'Guess', eyebrow: 'Emoji riddle',
-  blurb: 'Two or three emoji hide a movie or a word. Viewers guess before the reveal.',
+  blurb: 'Emoji hide a movie (by its plot, not its title) or a word. Viewers guess before the reveal.',
   defaults: { rounds: 6, seconds: 5 }, roundsRange: [3, 10],
   options: [{ id: 'cat', label: 'Riddles', choices: [['mixed', 'Mixed'], ['movie', 'Movies'], ['word', 'Words']] }],
   hooks: ['Guess it from the emoji 🤔', 'Can you crack all {N} emoji riddles?', 'Movie or word? Guess in {S} seconds', 'Emoji riddles that break brains 🧠'],
   shared(vr, N, cfg, opts) {
     const cat = (opts && opts.cat) || 'mixed', pool = REBUS.filter(p => cat === 'mixed' || p[2] === cat);
-    let list = rShuffle(vr, pool.slice());
-    if (cat === 'mixed') { const m = rShuffle(vr, REBUS.filter(p => p[2] === 'movie')), w = rShuffle(vr, REBUS.filter(p => p[2] === 'word')); list = []; for (let k = 0; k < Math.max(m.length, w.length); k++) { if (k % 2 === 0) { if (m[k]) list.push(m[k]); if (w[k]) list.push(w[k]); } else { if (w[k]) list.push(w[k]); if (m[k]) list.push(m[k]); } } }
+    // сначала средние фильмы, потом трудные: «чем дальше, тем сложнее»
+    const ramp = a => { const mv = a.filter(p => p[2] === 'movie'), mid = mv.filter(p => p[4] !== 3), hard = mv.filter(p => p[4] === 3);
+      const k = Math.min(2, mid.length), ordered = [...mid.slice(0, k), ...hard, ...mid.slice(k)]; let j = 0; return a.map(p => p[2] === 'movie' ? ordered[j++] : p); };
+    let list = ramp(rShuffle(vr, pool.slice()));
+    if (cat === 'mixed') { const m = ramp(rShuffle(vr, REBUS.filter(p => p[2] === 'movie'))), w = rShuffle(vr, REBUS.filter(p => p[2] === 'word')); list = []; for (let k = 0; k < Math.max(m.length, w.length); k++) { if (k % 2 === 0) { if (m[k]) list.push(m[k]); if (w[k]) list.push(w[k]); } else { if (w[k]) list.push(w[k]); if (m[k]) list.push(m[k]); } } }
     return { list };
   },
   gen(rng, i, N, diff, sh) {
     const p = sh.list[i % sh.list.length], pool = REBUS.filter(q => q[2] === p[2]);
-    const opts = optionPool(rng, pool, p, 2, q => q[1]).map(q => ({ label: q[1], correct: q === p }));
+    // у фильмов неверные варианты — похожие фильмы, а не случайные из списка
+    const opts = p[3] ? rShuffle(rng, [{ label: p[1], correct: true }, ...p[3].slice(0, 2).map(l => ({ label: l, correct: false }))])
+      : optionPool(rng, pool, p, 2, q => q[1]).map(q => ({ label: q[1], correct: q === p }));
     return { emo: p[0].split(' '), answer: p[1], cat: p[2], options: opts };
   },
   phases: (r, cfg) => qr(cfg, 2.2),

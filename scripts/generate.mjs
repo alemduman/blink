@@ -54,7 +54,7 @@ await page.evaluate(async () => { await document.fonts.ready; await Promise.all(
 
 const info = await page.evaluate(() => ({ tests: window.__blink.TEST_ORDER, themes: window.__blink.THEMES.map(t => t.id) }));
 const hist = state.history.filter(h => h.test);
-const test = rotate(info.tests, hist.map(h => h.test), G.avoidTests);
+const test = process.env.BLINK_TEST || rotate(info.tests, hist.map(h => h.test), G.avoidTests); // BLINK_TEST — только для ручной проверки
 const theme = rotate(info.themes, hist.map(h => h.theme), G.avoidThemes);
 console.log(`Тест: ${test}, фон: ${theme}, сложность: ${G.difficulty}`);
 
@@ -67,6 +67,7 @@ const res = await page.evaluate(async ({ test, theme, G }) => {
   st.opts = st.opts || {};
   const opts = {};
   for (const o of (T.options || [])) opts[o.id] = o.choices[Math.floor(Math.random() * o.choices.length)][0];
+  if (G.forced) Object.assign(opts, G.forced);
   st.opts[test] = opts;
   // как можно больше раундов, но чтобы ролик остался в пределах G.maxSeconds
   st.seconds = T.defaults.seconds;
@@ -97,7 +98,7 @@ const res = await page.evaluate(async ({ test, theme, G }) => {
   let bin = ''; const parts = [];
   for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode.apply(null, buf.subarray(i, i + 0x8000));
   return { video: btoa(bin), cover, cap: B.getCaption(), duration: xtl.duration, rounds: n, opts, seconds: st.seconds, name: T.name, eyebrow: T.eyebrow || '' };
-}, { test, theme, G });
+}, { test, theme, G: { ...G, forced: process.env.BLINK_OPTS ? JSON.parse(process.env.BLINK_OPTS) : null } });
 
 const base = `auto-${test}-${theme}`;
 const raw = path.join(outDir, base + '.raw.mp4');
