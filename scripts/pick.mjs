@@ -50,7 +50,14 @@ if (!videos.length) {
   if (!process.env.PW_PATH) try { require('playwright'); } catch {
     sh('npm', ['install', '--no-audit', '--no-fund', '--no-save', 'playwright@1.49.1']);
   }
-  if (!process.env.PW_PATH && !fs.existsSync(path.join(process.env.HOME || '', '.cache/ms-playwright'))) sh('npx', ['playwright', 'install', '--with-deps', 'chromium']);
+  if (!process.env.PW_PATH && !fs.existsSync(path.join(process.env.HOME || '', '.cache/ms-playwright'))) {
+    // apt у GitHub иногда отдаёт 503: сначала без системных пакетов (на раннере они уже есть), потом с повторами
+    let ok = false;
+    for (const args of [['install', 'chromium'], ['install', '--with-deps', 'chromium'], ['install', '--with-deps', 'chromium']]) {
+      try { sh('npx', ['playwright', ...args]); ok = true; break; } catch (e) { console.log('playwright install не удался, повтор…'); execFileSync('sleep', ['20']); }
+    }
+    if (!ok) throw new Error('playwright install не удался');
+  }
   sh('node', ['scripts/generate.mjs', GEN]);
   GENERATED = JSON.parse(fs.readFileSync(path.join(GEN, 'meta.json'), 'utf8'));
   SRC_DIR = GEN; videos = [GENERATED.base + '.mp4'];
