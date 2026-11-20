@@ -1158,9 +1158,14 @@ function maskHit(m, d, R) {
   return hits >= 3;
 }
 function plateColor(rng, spec, gnd, hueK, lum) {
-  let h = spec[2];
-  if (spec !== gnd) { const d = ((spec[2] - gnd[2] + 540) % 360) - 180; h = gnd[2] + d * hueK; }
-  return oklch(clamp(spec[0] + lum + (rng() - 0.5) * 0.17, 0.4, 0.9), spec[1] * (0.78 + rng() * 0.44), h + (rng() - 0.5) * 16);
+  let h = spec[2], L = spec[0], C = spec[1];
+  if (spec !== gnd) {
+    const d = ((spec[2] - gnd[2] + 540) % 360) - 180; h = gnd[2] + d * hueK;
+    // чем сложнее, тем ближе яркость и насыщенность фигуры к фону: остаётся только оттенок
+    const w = Math.max(0, 1 - hueK) * 0.65; L += (gnd[0] - L) * w; C += (gnd[1] - C) * w;
+  }
+  const nz = 0.17 + (1 - hueK) * 0.1;
+  return oklch(clamp(L + lum + (rng() - 0.5) * nz, 0.4, 0.9), C * (0.78 + rng() * 0.44), h + (rng() - 0.5) * 16);
 }
 function makePlate(rng, text, scheme, hueK, lum, emoji) {
   const dots = packDots(rng, PLATE_R), m = digitMask(text, PLATE_R, emoji);
@@ -1203,7 +1208,7 @@ defineTest({
     return { plan, order: rShuffle(vr, PLATE_SCHEMES.map((_, i) => i)), intro: makePlate(vr, '?', PLATE_SCHEMES[0], 1, -0.05) };
   },
   gen(rng, i, N, diff, sh) {
-    const f = fOf(i, N), k = { easy: [1, 0.85], medium: [0.95, 0.62], hard: [0.78, 0.46], expert: [0.62, 0.34] }[diff];
+    const f = fOf(i, N), k = { easy: [1, 0.85], medium: [0.85, 0.58], hard: [0.62, 0.4], expert: [0.46, 0.27] }[diff];
     const lum = { easy: -0.06, medium: -0.035, hard: -0.015, expert: 0 }[diff];
     const pl = sh.plan[i % sh.plan.length], kk = pl.kind === 'shape' ? [Math.min(1, k[0] + 0.1), Math.min(0.9, k[1] + 0.12)] : k;
     return { kind: pl.kind, label: pl.label, ...makePlate(rng, pl.text, PLATE_SCHEMES[sh.order[i % sh.order.length]], lerp(kk[0], kk[1], f), lum, pl.emoji) };
